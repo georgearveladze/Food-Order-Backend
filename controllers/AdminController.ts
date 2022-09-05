@@ -65,6 +65,8 @@ export const GetVandors = async (
   return res.json({ massage: 'vandors data not avalible' })
 }
 
+
+
 export const GetVandorById = async (
   req: Request,
   res: Response,

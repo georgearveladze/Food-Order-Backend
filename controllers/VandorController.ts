@@ -1,7 +1,7 @@
 import { json } from 'body-parser'
 import { Request, Response, NextFunction } from 'express'
 import { VandorLoginInputs } from '../dto'
-import { ValidatePassword } from '../utility'
+import { GenerateSignature, ValidatePassword } from '../utility'
 import { FindVandor } from './AdminController'
 
 export const VandorLogin = async (
@@ -21,12 +21,49 @@ export const VandorLogin = async (
       )
       //   return res.status(200).json({ existingVandor })
       if (validation) {
-        return res.status(200).json({ existingVandor })
+
+
+
+        const signature = GenerateSignature({
+          _id: existingVandor.id,
+          email: existingVandor.email,
+          foodTypes: existingVandor.foodType,
+          name: existingVandor.name
+        })
+
+        return res.status(200).json({ signature })
       } else {
-        return res.json({ massage: 'incorect password' })
+        return res.json({ massage: 'Password is not valid' })
       }
     }
   } catch {
     return res.json({ massage: 'login creditals not valid' })
   }
+}
+
+
+
+export const GetVandorProfile = async (req: Request, res: Response, next: NextFunction) => {
+
+  const user = req.user
+
+  if (user) {
+
+
+    const existingVandor = await FindVandor(user._id)
+    return res.json(existingVandor)
+  }
+
+  return res.json({ "masage": "Vandoor information not found" })
+
+
+}
+
+
+export const UpdateVandorProfile = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+
+export const UpdateVandorService = async (req: Request, res: Response, next: NextFunction) => {
+
 }
