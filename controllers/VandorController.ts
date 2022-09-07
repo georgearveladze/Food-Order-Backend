@@ -1,6 +1,5 @@
-import { json } from 'body-parser'
 import { Request, Response, NextFunction } from 'express'
-import { VandorLoginInputs } from '../dto'
+import { EditVandroInputs, VandorLoginInputs } from '../dto'
 import { GenerateSignature, ValidatePassword } from '../utility'
 import { FindVandor } from './AdminController'
 
@@ -19,7 +18,6 @@ export const VandorLogin = async (
         existingVandor.password,
         existingVandor.salt
       )
-      //   return res.status(200).json({ existingVandor })
       if (validation) {
 
 
@@ -62,6 +60,28 @@ export const GetVandorProfile = async (req: Request, res: Response, next: NextFu
 
 export const UpdateVandorProfile = async (req: Request, res: Response, next: NextFunction) => {
 
+
+
+  const { foodTypes, name, address, phone } = <EditVandroInputs>req.body
+
+  const user = req.user
+
+  if (user) {
+    const existingVandor = await FindVandor(user._id)
+    if (existingVandor !== null) {
+      existingVandor.name = name;
+      existingVandor.address = address;
+      existingVandor.phone = phone;
+      existingVandor.foodType = foodTypes
+
+      const savedResult = await existingVandor.save()
+      return res.json(savedResult)
+    }
+
+    return res.json(existingVandor)
+  }
+
+  return res.json({ "masage": "Vandoor information not found" })
 }
 
 export const UpdateVandorService = async (req: Request, res: Response, next: NextFunction) => {

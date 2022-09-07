@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose'
 interface VandorDoc extends Document {
   name: string
   ownerName: string
-  foodType: string[]
+  foodTypes: [string]
   pincode: string
   address: string
   phone: string
